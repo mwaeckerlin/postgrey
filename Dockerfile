@@ -3,4 +3,4 @@ MAINTAINER mwaeckerlin
 
 EXPOSE 10023
 
-RUN apt-get install -y postgrey postfix-
+RUN apt-get install --no-install-recommends --no-install-suggests -y postgrey postfix-
