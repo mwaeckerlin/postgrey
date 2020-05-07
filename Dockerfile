@@ -1,6 +1,15 @@
-FROM mwaeckerlin/ubuntu-base
+FROM mwaeckerlin/base
 MAINTAINER mwaeckerlin
 
-EXPOSE 10023
+ENV PORT=10023
+ENV OPTIONS=
 
-RUN apt-get install --no-install-recommends --no-install-suggests -y postgrey postfix-
+ENV CONTAINERNAME "postgrey"
+RUN $PKG_INSTALL postgrey \
+ && mkdir /data \
+ && $ALLOW_USER /data \
+ && ln -sf /proc/1/fd/1 /var/log/mail.log
+
+EXPOSE $PORT
+VOLUME /data
+USER $RUN_USER

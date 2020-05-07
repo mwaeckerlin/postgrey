@@ -1,9 +1,3 @@
-#!/bin/bash -ex
+#!/bin/sh -ex
 
-# setup logging
-! test -e /var/log/mail.log || rm /var/log/mail.log
-ln -sf /proc/self/fd/1 /var/log/mail.log
-
-service postgrey status && service postgrey restart \
-        || service postgrey start
-sleep infinity
+postgrey -i $PORT --dbdir=/data --user=$(id -u) --group=$(id -g) $OPTIONS
