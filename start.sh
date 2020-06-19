@@ -1,3 +1,3 @@
 #!/bin/sh -ex
 
-postgrey -i $PORT --dbdir=/data --user=$(id -u) --group=$(id -g) $OPTIONS
+postgrey -i 0.0.0.0:$PORT --dbdir=/data --user=$(id -u) --group=$(id -g) $OPTIONS
