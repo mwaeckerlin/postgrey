@@ -1,14 +1,14 @@
-FROM mwaeckerlin/base
+FROM mwaeckerlin/very-base
 
-ENV PORT=10023
-ENV OPTIONS=
+ENV CONTAINERNAME "milter-greylist"
+RUN $PKG_INSTALL milter-greylist \
+    && mkdir -p /data /var/lib/milter-greylist /var/run/milter-greylist \
+    && $ALLOW_USER /data /var/lib/milter-greylist /var/run/milter-greylist \
+    && sed -i '/^stat "/d' /etc/milter-greylist/greylist.conf \
+    && printf '%s\n' 'stat "|cat" "%T{%Y/%m/%d %T} %d [%i] %f -> %r %S (ACL %A) %Xc %Xe %Xm %Xh"' >> /etc/milter-greylist/greylist.conf
 
-ENV CONTAINERNAME "postgrey"
-RUN $PKG_INSTALL postgrey \
-    && mkdir /data \
-    && $ALLOW_USER /data \
-    && ln -sf /proc/1/fd/1 /var/log/mail.log
-
-EXPOSE $PORT
+EXPOSE 10025
 VOLUME /data
 USER $RUN_USER
+ENTRYPOINT ["/usr/bin/milter-greylist", "-c", "-p", "inet:0.0.0.0:10025", "-f", "/etc/milter-greylist/greylist.conf", "-d", "/data/greylist.db"]
+CMD ["-w", "300", "-A", "-a", "5"]
