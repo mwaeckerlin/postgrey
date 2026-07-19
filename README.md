@@ -12,33 +12,25 @@ mailbox.
 It used to be Postgrey, but that package has been dropped in Alpine,
 so this image is now migrated to Milter Greylist.
 
-To enable greylisting, run a separate greylisting container, using
-e.g. [mwaeckerlin/postgrey](https://hub.docker.com/r/mwaeckerlin/postgrey/),
-then either link it to this container or use the environment variable
-`GREYLIST` to specify the greylisting container's host name (optional :port):
+To enable greylisting, run this image next to a mail server image
+(e.g. [mwaeckerlin/mailforward](https://hub.docker.com/r/mwaeckerlin/mailforward))
+on a shared docker network and point the mail server's `GREYLIST`
+environment variable at it (host name, optional `:port`, default
+10025):
 
-  docker run -d --restart unless-stopped --name postgrey \
-          mwaeckerlin/postgrey
-   docker run -d --restart unless-stopped --name mailforward \
-              -p 25:25 \
-              -e 'MAPPINGS=…' \
-              --link postgrey:postgrey \
-              mwaeckerlin/mailforward
-
-Alternatively, e.g. for docker swarm, specify a yaml file:
-
-```
-version: '3.3'
+```yaml
 services:
   postgrey:
     image: mwaeckerlin/postgrey
-    ports:
-      - 10025:10025
+    # no published ports: the milter is only for the mail server —
+    # reach it over the shared compose network. Publishing 10025 on
+    # the host would let anyone speak the milter protocol to it.
   mailforward:
     image: mwaeckerlin/mailforward
     ports:
       - 25:25
     volumes:
+      # production persistence bind-mount onto shared storage
       - type: bind
         source: /srv/volumes/reverse-proxy/letsencrypt
         target: /etc/letsencrypt
