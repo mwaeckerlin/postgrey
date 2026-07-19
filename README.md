@@ -1,6 +1,14 @@
 Docker Image for Milter Greylist to Link to a Postfix Container
 ==============================================================
 
+> **DEPRECATED.** This image is no longer maintained and the repository
+> is archived. Greylisting is integrated in
+> [mwaeckerlin/mailservice](https://github.com/mwaeckerlin/mailservice)
+> (score-based, via [rspamd](https://github.com/mwaeckerlin/rspamd))
+> since mailservice 3.0.0 — use that stack instead. The published
+> Docker Hub image stays available as-is for existing standalone
+> setups, but receives no updates or security fixes.
+
 There is a SPAM prevention algorithmus named
 [greylisting](https://wikipedia.org/wiki/Greylisting), which means
 that any new sender of emails is blocked for some time. Only if the
